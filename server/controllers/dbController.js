@@ -1,11 +1,11 @@
 /* eslint-disable prefer-const */
-const models = require('../models/pfaModels');
-const mongoose = require('mongoose');
+import models from '../models/pfaModels';
+import { Types } from 'mongoose';
 
 const dbController = {};
 
 // Obtain all users matching query filter and returning specified fields
-dbController.getUsers = async (req, res, next) => {
+dbController.getUsers = async (_, res, next) => {
   try {
     // object specifying the filters on query
     const queryFilter = {};
@@ -30,7 +30,7 @@ dbController.getUsers = async (req, res, next) => {
 };
 
 // Obtain all user groups matching query filter and returning specified fields
-dbController.getUserGroups = async (req, res, next) => {
+dbController.getUserGroups = async (_, res, next) => {
   try {
     // object specifying the filters on query
     const queryFilter = {};
@@ -83,7 +83,7 @@ dbController.getSkills = async (req, res, next) => {
 };
 
 // Obtain all user groups matching query filter and returning specified fields
-dbController.getSkillGroups = async (req, res, next) => {
+dbController.getSkillGroups = async (_, res, next) => {
   try {
     // object specifying the filters on query
     const queryFilter = {};
@@ -108,7 +108,7 @@ dbController.getSkillGroups = async (req, res, next) => {
   }
 };
 
-dbController.createMessage = async (req, res, next) => {
+dbController.createMessage = async (req, _, next) => {
   try {
     let {
       contactEmail,
@@ -123,7 +123,8 @@ dbController.createMessage = async (req, res, next) => {
       contactEmail = sourceEmail;
     }
 
-    const genMessage = (fromName, toName, skill) => {
+    // TODO: move this helper function to a utils file/subdirectory
+    const generateMessage = (_, toName, skill) => {
       return (
         'Hi ' +
         toName +
@@ -140,14 +141,15 @@ dbController.createMessage = async (req, res, next) => {
       sourceEmail,
       targetEmail,
       targetName,
-      messageBody: genMessage(sourceName, targetName, skill),
+      messageBody: generateMessage(sourceName, targetName, skill),
       skill,
     };
 
-    const message = await models.Message.create(messageDoc);
+    await models.Message.create(messageDoc);
     await models.User.updateOne({email: targetEmail}, {$set: {newMessage: true}});
-
+    
     return next();
+
   } catch (err) {
     console.log(err);
     return next();
@@ -156,9 +158,6 @@ dbController.createMessage = async (req, res, next) => {
 
 dbController.getMessages = async (req, res, next) => {
   try {
-    // if (res.locals.tokenVerif == false) {
-    //   return next();
-    // }
     let targetEmail;
 
     if (req.params.targetEmail) {
@@ -167,24 +166,20 @@ dbController.getMessages = async (req, res, next) => {
       targetEmail = req.body.targetEmail;
     }
 
-    const queryFilter = {
-      targetEmail,
-    };
+    const queryFilter = { targetEmail, };
 
     const specifiedFields = {};
 
     const updateFields = {
-      $set: {
-        isRead: true,
-      },
+      $set: { isRead: true },
     };
 
     const messages = await models.Message.find(
       queryFilter,
       specifiedFields
     ).sort({ createdAt: -1 });
-    await models.Message.updateMany(queryFilter, updateFields);
 
+    await models.Message.updateMany(queryFilter, updateFields);
     res.locals.messages = messages;
 
     return next();
@@ -195,7 +190,7 @@ dbController.getMessages = async (req, res, next) => {
   }
 };
 
-dbController.delMessages = async (req, res, next) => {
+dbController.deleteMessages = async (req, res, next) => {
   try {
     res.locals.deleted = false;
 
@@ -204,7 +199,7 @@ dbController.delMessages = async (req, res, next) => {
     }
 
     const queryFilter = {
-      _id: mongoose.Types.ObjectId(req.body.messageID),
+      _id: Types.ObjectId(req.body.messageID),
     };
 
     const message = await models.Message.findOneAndDelete(queryFilter);
@@ -240,7 +235,7 @@ dbController.addSkill = async (req, res, next) => {
   }
 };
 
-dbController.delSkill = async (req, res, next) => {
+dbController.deleteSkill = async (req, res, next) => {
   try {
     if (!req.body.skillName) {
       return next();
@@ -257,7 +252,7 @@ dbController.delSkill = async (req, res, next) => {
 
     const userIDs = [];
     for (const teacher of teachers) {
-      userIDs.push(mongoose.Types.ObjectId(teacher._id));
+      userIDs.push(Types.ObjectId(teacher._id));
     }
 
     
@@ -306,7 +301,7 @@ dbController.addUserSkill = async (req, res, next) => {
   }
 };
 
-dbController.delUserSkill = async (req, res, next) => {
+dbController.deleteUserSkill = async (req, res, next) => {
   try {
     const { skillName, email } = req.body;
 
@@ -361,4 +356,4 @@ dbController.updateemail = async (req, res, next) => {
 };
 
 
-module.exports = dbController;
+export default dbController;

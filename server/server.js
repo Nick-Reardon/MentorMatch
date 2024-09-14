@@ -1,27 +1,23 @@
-const path = require('path');
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const authRouter = require('./routes/auth');
-const apiRouter = require('./routes/api');
-const dbConnect = require('./db.js');
+import { resolve } from 'path';
+import express, { json, urlencoded } from 'express';
+import cookieParser from 'cookie-parser';
+import authRouter from './routes/auth';
+import apiRouter from './routes/api';
+import dbConnect from './db.js';
 require('dotenv').config();
 
 const app = express();
 const PORT = 3000;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// handle json, cookies, serve static assets, etc
+app.use(json());
+app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.resolve(__dirname, '../dist')));
+app.use(express.static(resolve(__dirname, '../dist')));
+
+// routers
 app.use('/auth', authRouter);
 app.use('/api', apiRouter);
-// app.get('*', function(req, res) {
-//   res.sendFile(path.resolve(__dirname, '../dist/index.html'), function(err) {
-//     if (err) {
-//       res.status(500).send(err);
-//     }
-//   });
-// });
 
 app.listen(PORT, () => {
   dbConnect();

@@ -1,13 +1,15 @@
-const models = require('../models/pfaModels');
+const models = require('../models/pfaModels').default;
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 
 const authController = {};
 
+// TODO: move this helper function into a utils file/subdirectory
 function validateEmail(str) {
-  const re =
+  // NOTE: what the heck is this regex doing?
+  const regex =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(String(str).toLowerCase());
+  return regex.test(String(str).toLowerCase());
 }
 
 authController.verifyUser = async (req, res, next) => {
@@ -30,6 +32,8 @@ authController.verifyUser = async (req, res, next) => {
       newMessage: 1,
     };
 
+    // TODO: confirm whether the type of hasLogged stays as boolean, or changes?
+    // ... if it changes, then why? (not good practice)
     const verification = {
       hasLogged: false,
     };
@@ -98,7 +102,6 @@ authController.createUser = async (req, res, next) => {
       teach,
     };
 
-    // console.log('user doc submit:', userDoc);
     // object specifying the fields to be returned from db
     const specifiedFields = {
       firstName: 1,
@@ -107,7 +110,7 @@ authController.createUser = async (req, res, next) => {
       isAdmin: 1,
       newMessage: 1,
     };
-    // console.log('hit db lines');
+  
     const emailExist = await models.User.findOne({ email });
 
     if (emailExist) {
@@ -140,9 +143,8 @@ authController.createUser = async (req, res, next) => {
     for (const key in specifiedFields) {
       verification.userInfo[key] = user[key];
     }
-
     res.locals.verification = verification;
-    // console.log('verification: ', verification);
+
     return next();
   } catch (err) {
     console.log(err);
@@ -153,12 +155,12 @@ authController.createUser = async (req, res, next) => {
   }
 };
 
-authController.createSession = async (req, res, next) => {
+authController.createSession = (req, res, next) => {
   try {
     if (res.locals.verification.hasLogged !== true) {
       return next();
     }
-    const token = await jwt.sign({ id: req.body.email }, process.env.ID_SALT);
+    const token = jwt.sign({ id: req.body.email }, process.env.ID_SALT);
     res.cookie('ssid', token, { maxAge: 300000 });
     return next();
   } catch (err) {
@@ -166,33 +168,20 @@ authController.createSession = async (req, res, next) => {
   }
 };
 
-authController.verifyToken = async (req, res, next) => {
+authController.verifyToken = (req, res, next) => {
   try {
     const token = req.body.token;
-    const isToken = await jwt.verify(token, process.env.ID_SALT);
+    const isToken = jwt.verify(token, process.env.ID_SALT);
+
     if (isToken.id) {
       console.log('isToken is', isToken);
       res.locals.tokenVerif = true;
 
-      // const queryFilter = {
-      //   targetEmail: isToken.id,
-      // };
-
-      // const specifiedFields = {};
-
-      // const updateFields = {
-      //   $set: {
-      //     isRead: true,
-      //   },
-      // };
-
-      // const messages = await models.Message.find(queryFilter, specifiedFields);
-      // await models.Message.updateMany(queryFilter, updateFields);
-
-      // res.locals.messages = messages;
     } else res.locals.tokenVerif = false;
+    
     return next();
   } catch (err) {
+    
     return next({
       log: 'Express error handler caught an error at authController.verifyToken',
       message: { err },

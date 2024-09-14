@@ -1,4 +1,5 @@
-const models = require('../models/pfaModels');
+// NOTE: why is this imported but never read?
+import models from '../models/pfaModels';
 
 const graphController = {};
 
@@ -50,4 +51,4 @@ graphController.createNodes = (req, res, next) => {
   return next();
 };
 
-module.exports = graphController;
+export default graphController;

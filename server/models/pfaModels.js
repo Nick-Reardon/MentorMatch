@@ -1,16 +1,19 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const Schema = mongoose.Schema;
+/** This file sets up all relevant mongoose schemas */
+import { Schema as _Schema, model } from 'mongoose';
+import { genSalt, hash, compare } from 'bcryptjs';
+const Schema = _Schema;
 
-// sets a schema for the 'user' collection
+// --------------
+// ---- USER ----
+// --------------
 const userSchema = new Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
-  isAdmin: { type: Boolean, required: true, default: false},
+  isAdmin: { type: Boolean, required: true, default: false },
   userGroup: { type: String, default: 'user' },
-  newMessage: {type: Boolean, required: true, default: false},
+  newMessage: { type: Boolean, required: true, default: false },
   teach: [
     {
       name: String,
@@ -31,12 +34,12 @@ const userSchema = new Schema({
   ],
 });
 
-//set up preprocess for encrypting password
+// set up preprocess for encrypting password
 userSchema.pre('save', async function save(next) {
   try {
     const SALT_WORK_FACTOR = 10;
-    const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
-    this.password = await bcrypt.hash(this.password, salt);
+    const salt = await genSalt(SALT_WORK_FACTOR);
+    this.password = await hash(this.password, salt);
     return next();
   } catch (err) {
     return next(err);
@@ -45,21 +48,25 @@ userSchema.pre('save', async function save(next) {
 
 //cannot access password with arrow func
 userSchema.methods.verify = async function (password) {
-  const check = bcrypt.compare(password, this.password);
+  const check = compare(password, this.password);
   return check;
 };
 
-const User = mongoose.model('user', userSchema);
+const User = model('user', userSchema);
 
-// sets a schema for the 'userGroup' collection
+// --------------------
+// ---- USER GROUP ----
+// --------------------
 const userGroupSchema = new Schema({
   name: { type: String, required: true },
   color: { type: String },
 });
 
-const UserGroup = mongoose.model('userGroup', userGroupSchema);
+const UserGroup = model('userGroup', userGroupSchema);
 
-// sets a schema for the 'skill' collection
+// ---------------
+// ---- SKILL ---- 
+// ---------------
 const skillSchema = new Schema({
   name: { type: String, required: true },
   skillGroup: { type: String, default: 'skill' },
@@ -77,16 +84,21 @@ const skillSchema = new Schema({
   ],
 });
 
-const Skill = mongoose.model('skill', skillSchema);
+const Skill = model('skill', skillSchema);
 
-// sets a schema for the 'userGroup' collection
+// ---------------------
+// ---- SKILL GROUP ----
+// ---------------------
 const skillGroupSchema = new Schema({
   name: { type: String, required: true },
   color: { type: String },
 });
 
-const SkillGroup = mongoose.model('skillGroup', skillGroupSchema);
+const SkillGroup = model('skillGroup', skillGroupSchema);
 
+// -----------------
+// ---- MESSAGE ----
+// -----------------
 const messageSchema = new Schema({
   // info stored on login
   sourceName: { type: String, required: true },
@@ -102,6 +114,6 @@ const messageSchema = new Schema({
 
 }, {timestamps: true});
 
-const Message = mongoose.model('message', messageSchema);
+const Message = model('message', messageSchema);
 
-module.exports = { User, UserGroup, Skill, SkillGroup, Message };
+export default { User, UserGroup, Skill, SkillGroup, Message };

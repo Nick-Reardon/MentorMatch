@@ -1,35 +1,71 @@
-const express = require('express');
-const dbController = require('../controllers/dbController');
-const authController = require('../controllers/authController');
-const graphController = require('../controllers/graphController');
+import { Router } from 'express';
+import { getUsers, getUserGroups, getMessages, createMessage, deleteMessages, getSkills, addSkill, deleteSkill, addUserSkill, deleteUserSkill, updateemail } from '../controllers/dbController';
+import { createNodes } from '../controllers/graphController';
 
-const router = express.Router();
+const router = Router();
 
-router.get('/allUsers', dbController.getUsers, (req, res) => {
+
+// ----- USERS ------
+// ------------------
+router.get('/allUsers', getUsers, (_, res) => {
   res.status(200).json(res.locals.users);
 });
 
-router.get('/allUserGroups', dbController.getUserGroups, (req, res) => {
+router.get('/allUserGroups', getUserGroups, (_, res) => {
   res.status(200).json(res.locals.userGroups);
 });
 
-router.get('/allSkills/:skill', dbController.getSkills, (req, res) => {
-  res.status(200).json(res.locals.skills);
-});
-
-router.get('/allSkillGroups', dbController.getUserGroups, (req, res) => {
-  res.status(200).json(res.locals.skillGroups);
-});
-
-router.get('/messages/:targetEmail', dbController.getMessages, (req, res) => {
+// ---- MESSAGES ----
+// ------------------
+router.get('/messages/:targetEmail', getMessages, (_, res) => {
   res.status(200).json(res.locals.messages);
 });
 
+router.post('/sendMessage', createMessage, (_, res) => {
+  res.status(200).json(true);
+});
+
+router.delete('/delMessage', deleteMessages, getMessages, (_, res) => {
+  res.status(200).json(res.locals.messages);
+});
+
+// ---- SKILLS ----
+// ---------------- 
+router.get('/allSkills/:skill', getSkills, (_, res) => {
+  res.status(200).json(res.locals.skills);
+});
+
+router.get('/allSkillGroups', getUserGroups, (_, res) => {
+  res.status(200).json(res.locals.skillGroups);
+});
+
+router.post('/addSkill', addSkill, getSkills, (_, res) => {
+  res.status(200).json(res.locals.skills);
+});
+
+// TODO: remove abbreviation on endpoint
+router.delete('/delSkill', deleteSkill, getSkills, (_, res) => {
+  res.status(200).json(res.locals.skills);
+});
+
+// TODO: fix casing on endpoint
+router.post('/adduserskill', addUserSkill, getSkills, (_, res) => {
+  res.status(200).json(res.locals.skills);
+});
+
+// TODO: fix casing on endpoint
+// TODO: fix abbreviation on controller method
+router.delete('/deleteuserskill', deleteUserSkill, getSkills, (_, res) => {
+  res.status(200).json(res.locals.skills);
+});
+
+// ---- NODES -----
+// ----------------
 router.get(
   '/nodes/:skill',
-  dbController.getSkills,
-  graphController.createNodes,
-  (req, res) => {
+  getSkills,
+  createNodes,
+  (_, res) => {
     const data = {
       skills: res.locals.skillName,
       nodes: res.locals.nodes,
@@ -39,35 +75,9 @@ router.get(
   }
 );
 
-router.post('/sendMessage', dbController.createMessage, (req, res) => {
-  res.status(200).json(true);
-});
-
-router.delete('/delMessage', dbController.delMessages, dbController.getMessages, (req, res) => {
-  res.status(200).json(res.locals.messages);
-});
-
-
-router.post('/addSkill', dbController.addSkill, dbController.getSkills, (req, res) => {
-  res.status(200).json(res.locals.skills);
-});
-
-
-router.delete('/delSkill', dbController.delSkill, dbController.getSkills, (req, res) => {
-  res.status(200).json(res.locals.skills);
-});
-
-router.post('/adduserskill', dbController.addUserSkill, dbController.getSkills, (req, res) => {
-  res.status(200).json(res.locals.skills);
-});
-
-router.delete('/deleteuserskill', dbController.delUserSkill, dbController.getSkills, (req, res) => {
-  res.status(200).json(res.locals.skills);
-});
-
-
-router.put('/updateemail', dbController.updateemail, (req, res) => {
+// TODO: fix casing on endpoint & controller method
+router.put('/updateemail', updateemail, (_, res) => {
   res.status(200).json(res.locals.update);
 });
 
-module.exports = router;
+export default router;

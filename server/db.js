@@ -1,15 +1,16 @@
-const mongoose = require('mongoose');
+import { connect } from 'mongoose';
+
+ /** Options to pass to the mongoose connect method for parsing the URI */
+const dbConfig = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  dbName: 'pfa'
+}
 
 const dbConnect = (uri = process.env.DB_URI) => {
-  mongoose.connect(uri, {
-    // options for the connect method to parse the URI
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    // set the name of the DB our collections are part of
-    dbName: 'pfa'
-  })
+  connect(uri, dbConfig)
     .then(() => console.log('Connected to MongoDB.'))
     .catch(err => console.log(err));
 };
 
-module.exports = dbConnect;
+export default dbConnect;
