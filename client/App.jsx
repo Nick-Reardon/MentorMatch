@@ -10,7 +10,7 @@ const ErrorPage = lazy(() => import ('./Components/ErrorPage'));
 const RequestsPage = lazy(() => import ('./Components/RequestsPage'));
 const Settings = lazy(() => import ('./Components/Settings'));
 
-const App = (props) => {
+const App = () => {
   const [auth, setAuth] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   

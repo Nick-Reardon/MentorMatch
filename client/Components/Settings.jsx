@@ -1,7 +1,7 @@
 import React from 'react';
-import SettingsAdmin from './SettingsAdmin';
-import SettingsReg from './SettingsReg';
-import Navbar from './Navbar';
+import SettingsAdmin from './SettingsAdmin.jsx';
+import SettingsReg from './SettingsReg.jsx';
+import Navbar from './Navbar.jsx';
 
 /*
 Renders Regular or Admin Settings based on admin prop from localStorage 

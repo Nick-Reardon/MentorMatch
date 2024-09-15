@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import PopUpLog from './PopUpLog';
-import PopUpReg from './PopUpReg';
+import React, { useState } from 'react';
+import PopUpLog from './PopUpLog.jsx';
+import PopUpReg from './PopUpReg.jsx';
 
 const LandingPage = (props) => {
   //states to open/close modal, passed as props to PopUpLog, PopUpReg components;

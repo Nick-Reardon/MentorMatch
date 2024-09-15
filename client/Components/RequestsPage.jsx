@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import Request from './Request';
 import { CircularProgress } from '@material-ui/core';
-import Navbar from './Navbar';
+import React, { useState, useEffect } from 'react';
+import Request from './Request.jsx';
+import Navbar from './Navbar.jsx';
 
 /*
 fetches data on mount and renders Request Components;

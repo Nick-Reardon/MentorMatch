@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { runForceGraph } from './ForceGraphGenerator';
-import styles from './forceGraph.module.css';
+import React, { useEffect } from 'react';
 import * as d3 from 'd3';
+import { runForceGraph } from './ForceGraphGenerator.js';
+import styles from './forceGraph.module.css';
 
 export function ForceGraph({
   skillsData,
