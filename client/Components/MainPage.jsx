@@ -50,7 +50,6 @@ const MainPage = (props) => {
     }
   };
 
-
   // updates class in SkillsList after 2 sec 
   useEffect(() => {
     setTimeout(() => {
