@@ -3,7 +3,7 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import './index.scss';
 import { CircularProgress } from '@material-ui/core';
 
-//lazy loading components to split bundle.js into chunks
+// lazy loading components to split bundle.js into chunks
 const LandingPage = lazy(() => import( './Components/LandingPage'));
 const MainPage = lazy(() => import ('./Components/MainPage'));
 const ErrorPage = lazy(() => import ('./Components/ErrorPage'));
@@ -11,15 +11,14 @@ const RequestsPage = lazy(() => import ('./Components/RequestsPage'));
 const Settings = lazy(() => import ('./Components/Settings'));
 
 const App = (props) => {
-  //state updated on login, signup
   const [auth, setAuth] = useState(false);
-  //token stored upon successful auth to replace sessions. 
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // token stored upon successful auth to replace sessions. 
   const authToken = localStorage.getItem('token');
   
-  const [isLoading, setIsLoading] = useState(true);
-
-  //verifying token from localStorage on mount and auth to avoid hacked localStorage
-  //checked every time we refresh browser or load one of urls in browser
+  // verifying token from localStorage on mount and auth to avoid hacked localStorage
+  // checked every time we refresh browser or load one of urls in browser
 
   useEffect(() => {
     fetchData();

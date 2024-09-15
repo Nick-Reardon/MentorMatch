@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import { getUsers, getUserGroups, getMessages, createMessage, deleteMessages, getSkills, addSkill, deleteSkill, addUserSkill, deleteUserSkill, updateemail } from '../controllers/dbController';
-import { createNodes } from '../controllers/graphController';
+import dbController from '../controllers/dbController.js';
+import graphController from '../controllers/graphController.js';
 
 const router = Router();
+const { createNodes } = graphController;
+const { getUsers, getUserGroups, getMessages, createMessage, deleteMessages, getSkills, addSkill, deleteSkill, addUserSkill, deleteUserSkill, updateemail } = dbController;
 
 
 // ----- USERS ------

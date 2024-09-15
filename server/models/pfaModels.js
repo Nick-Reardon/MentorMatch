@@ -1,7 +1,9 @@
 /** This file sets up all relevant mongoose schemas */
-import { Schema as _Schema, model } from 'mongoose';
-import { genSalt, hash, compare } from 'bcryptjs';
-const Schema = _Schema;
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+
+const { Schema, model } = mongoose;
+const { genSalt, hash, compare } = bcrypt;
 
 // --------------
 // ---- USER ----

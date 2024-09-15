@@ -1,4 +1,6 @@
-import { connect } from 'mongoose';
+import mongoose from 'mongoose';
+
+const { connect } = mongoose;
 
  /** Options to pass to the mongoose connect method for parsing the URI */
 const dbConfig = {

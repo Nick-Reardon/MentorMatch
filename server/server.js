@@ -1,10 +1,13 @@
 import { resolve } from 'path';
 import express, { json, urlencoded } from 'express';
 import cookieParser from 'cookie-parser';
-import authRouter from './routes/auth';
-import apiRouter from './routes/api';
+import authRouter from './routes/auth.js';
+import apiRouter from './routes/api.js';
 import dbConnect from './db.js';
-require('dotenv').config();
+import dotenv from 'dotenv';
+import { __dirname } from './utils/globals.js';
+
+dotenv.config();
 
 const app = express();
 const PORT = 3000;

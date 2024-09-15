@@ -1,5 +1,5 @@
 // NOTE: why is this imported but never read?
-import models from '../models/pfaModels';
+import models from '../models/pfaModels.js';
 
 const graphController = {};
 

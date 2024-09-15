@@ -1,6 +1,9 @@
-const models = require('../models/pfaModels').default;
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
+import mongoose from 'mongoose';
+import jswt from 'jsonwebtoken';
+import models from '../models/pfaModels.js';
+
+const { Types } = mongoose;
+const { sign, verify } = jswt;
 
 const authController = {};
 
@@ -89,7 +92,7 @@ authController.createUser = async (req, res, next) => {
     for (const key in skillsToTeach) {
       teach.push({
         name: key,
-        _id: mongoose.Types.ObjectId(skillsToTeach[key]),
+        _id: Types.ObjectId(skillsToTeach[key]),
       });
     }
 
@@ -160,7 +163,7 @@ authController.createSession = (req, res, next) => {
     if (res.locals.verification.hasLogged !== true) {
       return next();
     }
-    const token = jwt.sign({ id: req.body.email }, process.env.ID_SALT);
+    const token = sign({ id: req.body.email }, process.env.ID_SALT);
     res.cookie('ssid', token, { maxAge: 300000 });
     return next();
   } catch (err) {
@@ -171,7 +174,7 @@ authController.createSession = (req, res, next) => {
 authController.verifyToken = (req, res, next) => {
   try {
     const token = req.body.token;
-    const isToken = jwt.verify(token, process.env.ID_SALT);
+    const isToken = verify(token, process.env.ID_SALT);
 
     if (isToken.id) {
       console.log('isToken is', isToken);
@@ -189,4 +192,4 @@ authController.verifyToken = (req, res, next) => {
   }
 };
 
-module.exports = authController;
+export default authController;

@@ -1,7 +1,8 @@
 /* eslint-disable prefer-const */
-import models from '../models/pfaModels';
-import { Types } from 'mongoose';
+import models from '../models/pfaModels.js';
+import mongoose from 'mongoose';
 
+const { Types } = mongoose;
 const dbController = {};
 
 // Obtain all users matching query filter and returning specified fields

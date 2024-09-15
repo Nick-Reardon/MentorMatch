@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "nodemon server/server.js",
     "dev": "concurrently \"cross-env NODE_ENV='development' webpack-dev-server --history-api-fallback \" \"nodemon ./server/server.js\"",

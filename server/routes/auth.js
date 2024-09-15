@@ -1,6 +1,7 @@
-import { createUser, createSession, verifyUser, verifyToken } from '../controllers/authController';
+import authController from '../controllers/authController.js';
 import { Router } from 'express';
 
+const { createUser, createSession, verifyUser, verifyToken } = authController;
 const router = Router();
 
 router.post(
